@@ -1,19 +1,26 @@
 {
-  "name": "java_pohja",
+  "name": "week3",
   "version": "1.0.0",
-  "description": "",
+  "description": "Viikon 3 harjoitukset",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/api/app.js",
+    "start": "node src/api/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@eslint/css": "^1.0.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.0.3",
-    "globals": "^17.4.0"
+    "globals": "^17.4.0",
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
   }
 }
