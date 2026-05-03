@@ -3,22 +3,24 @@ import bcrypt from 'bcrypt';
 import { findUserByUsername } from '../models/usersModel.js';
 import 'dotenv/config';
 
-const postLogin = async (req, res) => {
-  const user = await findUserByUsername(req.body.username);
-  if (!user) return res.sendStatus(401);
-  const passwordMatch = await bcrypt.compare(req.body.password, user.password);
-  if (!passwordMatch) return res.sendStatus(401);
+const postLogin = async (req, res, next) => {
+  try {
+    const user = await findUserByUsername(req.body.username);
+    if (!user) return next({status:401, message: 'Invalid credentials'});
+    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!passwordMatch) return next({status:401, message: 'Invalid credentials'});
 
-  const userWithNoPassword = {
-    user_id: user.user_id,
-    name: user.name,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-  };
+    const userWithNoPassword = {
+      user_id: user.user_id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    };
 
-  const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, { expiresIn: '24h' });
-  res.json({user: userWithNoPassword, token});
+    const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.json({user: userWithNoPassword, token});
+  } catch (err) { next(err); }
 };
 
 const getMe = async (req, res) => {

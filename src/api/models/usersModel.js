@@ -4,7 +4,7 @@ const listAllUsers = async () => {
   const [rows] = await promisePool.query(
     `SELECT user_id, name, username, email, role, password
      FROM wsk_users
-     ORDER BY user_id`,
+     ORDER BY user_id`
   );
   return rows;
 };
@@ -14,7 +14,7 @@ const findUserById = async (id) => {
     `SELECT user_id, name, username, email, role, password
      FROM wsk_users
      WHERE user_id = ?`,
-    [id],
+    [id]
   );
 
   if (rows.length === 0) {
@@ -28,7 +28,13 @@ const addUser = async (user) => {
   const {name, username, email, role, password} = user;
   const sql = `INSERT INTO wsk_users (name, username, email, role, password)
                VALUES (?, ?, ?, ?, ?)`;
-  const [result] = await promisePool.execute(sql, [name, username, email, role, password]);
+  const [result] = await promisePool.execute(sql, [
+    name,
+    username,
+    email,
+    role,
+    password,
+  ]);
 
   if (result.affectedRows === 0) {
     return false;
@@ -42,7 +48,14 @@ const modifyUser = async (user, id) => {
   const sql = `UPDATE wsk_users
                SET name = ?, username = ?, email = ?, role = ?, password = ?
                WHERE user_id = ?`;
-  const [result] = await promisePool.execute(sql, [name, username, email, role, password, id]);
+  const [result] = await promisePool.execute(sql, [
+    name,
+    username,
+    email,
+    role,
+    password,
+    id,
+  ]);
 
   if (result.affectedRows === 0) {
     return false;
@@ -57,7 +70,10 @@ const removeUser = async (id) => {
   try {
     await connection.beginTransaction();
     await connection.execute('DELETE FROM wsk_cats WHERE owner = ?', [id]);
-    const [result] = await connection.execute('DELETE FROM wsk_users WHERE user_id = ?', [id]);
+    const [result] = await connection.execute(
+      'DELETE FROM wsk_users WHERE user_id = ?',
+      [id]
+    );
 
     if (result.affectedRows === 0) {
       await connection.rollback();
@@ -81,7 +97,7 @@ const findUserByUsername = async (username) => {
     `SELECT user_id, name, username, email, role, password
      FROM wsk_users
      WHERE username = ?`,
-    [username],
+    [username]
   );
   if (rows.length === 0) return false;
   return rows[0];
