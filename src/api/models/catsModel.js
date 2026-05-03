@@ -1,34 +1,78 @@
-import { readFile } from 'node:fs/promises';
+import promisePool from '../../utils/database.js';
 
-const fileUrl = new URL('../serve.json', import.meta.url);
-let cached = null;
+const listAllCats = async () => {
+  const [rows] = await promisePool.query(
+    `SELECT c.cat_id, c.cat_name, c.weight, c.owner, c.filename, c.birthdate, u.name AS owner_name
+     FROM wsk_cats c
+     LEFT JOIN wsk_users u ON c.owner = u.user_id
+     ORDER BY c.cat_id`,
+  );
+  return rows;
+};
 
-async function loadCats() {
-  if (cached) return cached;
-  const raw = await readFile(fileUrl, 'utf-8');
-  const parsed = JSON.parse(raw);
-  const arr = Array.isArray(parsed) ? parsed : [parsed];
-  cached = arr.map((c) => ({
-    id: c.cat_id ?? c.id ?? c.catId ?? null,
-    ...c,
-  }));
-  return cached;
-}
+const findCatById = async (id) => {
+  const [rows] = await promisePool.execute(
+    `SELECT c.cat_id, c.cat_name, c.weight, c.owner, c.filename, c.birthdate, u.name AS owner_name
+     FROM wsk_cats c
+     LEFT JOIN wsk_users u ON c.owner = u.user_id
+     WHERE c.cat_id = ?`,
+    [id],
+  );
 
-export async function getAllCats() {
-  return await loadCats();
-}
+  if (rows.length === 0) {
+    return false;
+  }
 
-export async function getCatById(id) {
-  const list = await loadCats();
-  return list.find((c) => String(c.id) === String(id));
-}
+  return rows[0];
+};
 
-export async function addCat(cat) {
-  const list = await loadCats();
-  const maxId = list.reduce((m, it) => Math.max(m, Number(it.id) || 0), 0);
-  const newId = maxId + 1;
-  const newCat = { id: newId, ...cat, image: cat.image ?? cat.filename ?? null };
-  list.push(newCat);
-  return newCat;
-}
+const findCatsByUserId = async (userId) => {
+  const [rows] = await promisePool.execute(
+    `SELECT c.cat_id, c.cat_name, c.weight, c.owner, c.filename, c.birthdate, u.name AS owner_name
+     FROM wsk_cats c
+     LEFT JOIN wsk_users u ON c.owner = u.user_id
+     WHERE c.owner = ?
+     ORDER BY c.cat_id`,
+    [userId],
+  );
+  return rows;
+};
+
+const addCat = async (cat) => {
+  const {cat_name, weight, owner, filename, birthdate} = cat;
+  const sql = `INSERT INTO wsk_cats (cat_name, weight, owner, filename, birthdate)
+               VALUES (?, ?, ?, ?, ?)`;
+  const [result] = await promisePool.execute(sql, [cat_name, weight, owner, filename, birthdate]);
+
+  if (result.affectedRows === 0) {
+    return false;
+  }
+
+  return {cat_id: result.insertId};
+};
+
+const modifyCat = async (cat, id) => {
+  const {cat_name, weight, owner, filename, birthdate} = cat;
+  const sql = `UPDATE wsk_cats
+               SET cat_name = ?, weight = ?, owner = ?, filename = ?, birthdate = ?
+               WHERE cat_id = ?`;
+  const [result] = await promisePool.execute(sql, [cat_name, weight, owner, filename, birthdate, id]);
+
+  if (result.affectedRows === 0) {
+    return false;
+  }
+
+  return {message: 'success'};
+};
+
+const removeCat = async (id) => {
+  const [result] = await promisePool.execute('DELETE FROM wsk_cats WHERE cat_id = ?', [id]);
+
+  if (result.affectedRows === 0) {
+    return false;
+  }
+
+  return {message: 'success'};
+};
+
+export {listAllCats, findCatById, findCatsByUserId, addCat, modifyCat, removeCat};

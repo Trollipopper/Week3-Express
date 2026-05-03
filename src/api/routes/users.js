@@ -6,11 +6,7 @@ const router = express.Router();
 router.get('/', ctrl.getUsers);
 router.get('/:id', ctrl.getUser);
 router.post('/', ctrl.createUser);
-router.put('/:id', (req, res) => {
-  res.json({message: 'User item updated.'});
-});
-router.delete('/:id', (req, res) => {
-  res.json({message: 'User item deleted.'});
-});
+router.put('/:id', ctrl.updateUser);
+router.delete('/:id', ctrl.deleteUser);
 
 export default router;
