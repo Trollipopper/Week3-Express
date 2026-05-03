@@ -44,6 +44,12 @@ export async function updateCat(req, res) {
   try {
     const existingCat = await model.findCatById(req.params.id);
     if (!existingCat) return res.status(404).json({message: 'Cat not found'});
+    const auth = res.locals.user;
+    if (!auth) return res.sendStatus(401);
+    // authorization: owner or admin
+    if (auth.role !== 'admin' && Number(auth.user_id) !== Number(existingCat.owner)) {
+      return res.sendStatus(403);
+    }
 
     const updatedCat = await model.modifyCat(
       {
@@ -52,6 +58,7 @@ export async function updateCat(req, res) {
         filename: req.file?.filename ?? existingCat.filename,
       },
       req.params.id,
+      auth,
     );
     res.json(updatedCat);
   } catch (err) {
@@ -61,7 +68,14 @@ export async function updateCat(req, res) {
 
 export async function deleteCat(req, res) {
   try {
-    const deletedCat = await model.removeCat(req.params.id);
+    const auth = res.locals.user;
+    if (!auth) return res.sendStatus(401);
+
+    const existingCat = await model.findCatById(req.params.id);
+    if (!existingCat) return res.status(404).json({message: 'Cat not found'});
+    if (auth.role !== 'admin' && Number(auth.user_id) !== Number(existingCat.owner)) return res.sendStatus(403);
+
+    const deletedCat = await model.removeCat(req.params.id, auth);
     if (!deletedCat) return res.status(404).json({message: 'Cat not found'});
 
     res.json(deletedCat);
