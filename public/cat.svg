@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#f6f1e7"/>
+  <circle cx="180" cy="120" r="70" fill="#f4c46a"/>
+  <polygon points="130,65 155,25 170,80" fill="#f4c46a"/>
+  <polygon points="190,80 205,25 230,65" fill="#f4c46a"/>
+  <circle cx="155" cy="120" r="8" fill="#2a2927"/>
+  <circle cx="205" cy="120" r="8" fill="#2a2927"/>
+  <polygon points="180,135 168,148 192,148" fill="#d9735b"/>
+  <path d="M 180 148 C 172 158, 165 160, 158 157" stroke="#2a2927" fill="none" stroke-width="3"/>
+  <path d="M 180 148 C 188 158, 195 160, 202 157" stroke="#2a2927" fill="none" stroke-width="3"/>
+  <line x1="95" y1="140" x2="145" y2="138" stroke="#2a2927" stroke-width="3"/>
+  <line x1="95" y1="153" x2="145" y2="148" stroke="#2a2927" stroke-width="3"/>
+  <line x1="215" y1="138" x2="265" y2="140" stroke="#2a2927" stroke-width="3"/>
+  <line x1="215" y1="148" x2="265" y2="153" stroke="#2a2927" stroke-width="3"/>
+  <text x="180" y="205" text-anchor="middle" font-family="Verdana, sans-serif" font-size="18" fill="#2a2927">Cat API static test image</text>
+</svg>
