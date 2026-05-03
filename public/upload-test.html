@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin: 20px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="file"],
+    input[type="text"],
+    button {
+      padding: 8px;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      display: none;
+    }
+    .result.show {
+      display: block;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>File Upload Test</h1>
+  <form id="uploadForm">
+    <div class="form-group">
+      <label for="file">Select Image File:</label>
+      <input type="file" id="file" name="file" accept="image/*" required>
+    </div>
+    <div class="form-group">
+      <label for="name">Cat Name:</label>
+      <input type="text" id="name" name="name" value="Test Cat" required>
+    </div>
+    <button type="submit">Upload</button>
+  </form>
+  
+  <div id="result" class="result">
+    <div id="resultMessage"></div>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData();
+      formData.append('file', document.getElementById('file').files[0]);
+      formData.append('name', document.getElementById('name').value);
+      
+      const resultDiv = document.getElementById('result');
+      const resultMessage = document.getElementById('resultMessage');
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/cats', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultMessage.className = 'success';
+          resultMessage.textContent = '✓ File uploaded successfully! Check the uploads folder for the thumbnail file.';
+        } else {
+          resultMessage.className = 'error';
+          resultMessage.textContent = '✗ Upload failed: ' + (data.message || 'Unknown error');
+        }
+      } catch (error) {
+        resultMessage.className = 'error';
+        resultMessage.textContent = '✗ Error: ' + error.message;
+      }
+      
+      resultDiv.classList.add('show');
+    });
+  </script>
+</body>
+</html>
