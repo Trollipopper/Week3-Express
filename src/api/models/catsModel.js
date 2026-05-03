@@ -28,7 +28,7 @@ export async function addCat(cat) {
   const list = await loadCats();
   const maxId = list.reduce((m, it) => Math.max(m, Number(it.id) || 0), 0);
   const newId = maxId + 1;
-  const newCat = { id: newId, ...cat };
+  const newCat = { id: newId, ...cat, image: cat.image ?? cat.filename ?? null };
   list.push(newCat);
   return newCat;
 }

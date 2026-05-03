@@ -21,7 +21,12 @@ export async function getCat(req, res) {
 
 export async function createCat(req, res) {
   try {
-    const newCat = await model.addCat(req.body);
+    console.log(req.body);
+    console.log(req.file);
+    const newCat = await model.addCat({
+      ...req.body,
+      image: req.file?.filename,
+    });
     res.status(201).json(newCat);
   } catch (err) {
     res.status(500).json({message: 'Failed to add cat'});
