@@ -1,14 +1,18 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { findUserByUsername } from '../models/usersModel.js';
+import {findUserByUsername} from '../models/usersModel.js';
 import 'dotenv/config';
 
 const postLogin = async (req, res, next) => {
   try {
     const user = await findUserByUsername(req.body.username);
-    if (!user) return next({status:401, message: 'Invalid credentials'});
-    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
-    if (!passwordMatch) return next({status:401, message: 'Invalid credentials'});
+    if (!user) return next({status: 401, message: 'Invalid credentials'});
+    const passwordMatch = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!passwordMatch)
+      return next({status: 401, message: 'Invalid credentials'});
 
     const userWithNoPassword = {
       user_id: user.user_id,
@@ -18,9 +22,13 @@ const postLogin = async (req, res, next) => {
       role: user.role,
     };
 
-    const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, {
+      expiresIn: '24h',
+    });
     res.json({user: userWithNoPassword, token});
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getMe = async (req, res) => {

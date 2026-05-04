@@ -47,7 +47,7 @@ const addCat = async (cat) => {
     weight,
     owner,
     filename,
-    birthdate,
+    birthdate || null,
   ]);
 
   if (result.affectedRows === 0) {
@@ -68,7 +68,7 @@ const modifyCat = async (cat, id, auth) => {
       weight,
       owner,
       filename,
-      birthdate,
+      birthdate || null,
       id,
       auth.user_id,
     ]);
@@ -83,7 +83,7 @@ const modifyCat = async (cat, id, auth) => {
     weight,
     owner,
     filename,
-    birthdate,
+    birthdate || null,
     id,
   ]);
   if (result.affectedRows === 0) return false;
