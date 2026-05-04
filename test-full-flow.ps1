@@ -20,18 +20,20 @@ try {
   Write-Host "`n=== TESTING CAT CREATION ===" -ForegroundColor Green
   
   # Use curl to send multipart form data (not JSON) for file upload support
-  $catOutput = & curl.exe -X POST "http://127.0.0.1:3000/api/v1/cats" `
+  $catOutput = & curl.exe -sS -X POST "http://127.0.0.1:3000/api/v1/cats" `
     -H "Authorization: Bearer $token" `
     -F "cat_name=TestCat" `
-    -F "owner=38" `
+    -F "owner=$($loginResponse.user.user_id)" `
     -F "weight=5.2"
   
   Write-Host "Cat creation response: $catOutput" -ForegroundColor Cyan
   
-  if ($catOutput -like '*cat_id*' -or $catOutput -like '*TestCat*') {
+  if ($catOutput -like '*"error"*') {
+    throw "Cat creation failed: $catOutput"
+  } elseif ($catOutput -like '*cat_id*' -or $catOutput -like '*TestCat*') {
     Write-Host "Cat created successfully!" -ForegroundColor Green
   } else {
-    Write-Host "Warning: Unexpected response or cat creation had an issue" -ForegroundColor Yellow
+    throw "Cat creation returned unexpected response: $catOutput"
   }
   
   Write-Host "`n=== ALL TESTS PASSED ===" -ForegroundColor Green

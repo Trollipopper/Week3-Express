@@ -32,7 +32,8 @@ export async function createCat(req, res, next) {
   try {
     const newCat = await model.addCat({
       ...req.body,
-      filename: req.file?.filename,
+      // DB requires filename to be non-null, so use a placeholder when no file was uploaded.
+      filename: req.file?.filename ?? 'no-image.png',
     });
     res.status(201).json(newCat);
   } catch (err) {
