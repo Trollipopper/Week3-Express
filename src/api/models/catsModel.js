@@ -43,10 +43,10 @@ const addCat = async (cat) => {
   const sql = `INSERT INTO wsk_cats (cat_name, weight, owner, filename, birthdate)
                VALUES (?, ?, ?, ?, ?)`;
   const [result] = await promisePool.execute(sql, [
-    cat_name,
-    weight,
-    owner,
-    filename,
+    cat_name || null,
+    weight || null,
+    owner || null,
+    filename || null,
     birthdate || null,
   ]);
 
@@ -64,10 +64,10 @@ const modifyCat = async (cat, id, auth) => {
                  SET cat_name = ?, weight = ?, owner = ?, filename = ?, birthdate = ?
                  WHERE cat_id = ? AND owner = ?`;
     const [result] = await promisePool.execute(sql, [
-      cat_name,
-      weight,
-      owner,
-      filename,
+      cat_name || null,
+      weight || null,
+      owner || null,
+      filename || null,
       birthdate || null,
       id,
       auth.user_id,
@@ -79,10 +79,10 @@ const modifyCat = async (cat, id, auth) => {
                SET cat_name = ?, weight = ?, owner = ?, filename = ?, birthdate = ?
                WHERE cat_id = ?`;
   const [result] = await promisePool.execute(sql, [
-    cat_name,
-    weight,
-    owner,
-    filename,
+    cat_name || null,
+    weight || null,
+    owner || null,
+    filename || null,
     birthdate || null,
     id,
   ]);
